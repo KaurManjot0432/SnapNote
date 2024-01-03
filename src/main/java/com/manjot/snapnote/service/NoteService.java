@@ -1,25 +1,21 @@
 package com.manjot.snapnote.service;
 
 import com.manjot.snapnote.model.Note;
-import jakarta.validation.constraints.NotNull;
+import com.manjot.snapnote.model.enums.QueryType;
 
 import java.util.List;
 
 public interface NoteService {
-    public Note createNote(@NotNull final Note note);
+    public Note createNote(Note note);
 
-    public Note getNoteById(@NotNull final String noteId,
-                            @NotNull final String userName);
+    public Note getNoteById(String noteId, String userName);
 
-    public List<Note> getAllNotes(@NotNull final String userName);
+    public List<Note> getAllNotes(String userName);
 
-    public Note updateNote(@NotNull final String id,
-                           @NotNull final String username,
-                           @NotNull final Note updatedNote);
+    public Note updateNote(String id, String username, Note updatedNote);
 
-    public void deleteNoteById(@NotNull final String id,
-                               @NotNull final String username);
-    public void shareNoteWithUser(@NotNull final String noteId,
-                                  @NotNull final String senderUsername,
-                                  @NotNull final String recipientUsername);
+    public void deleteNoteById(String id, String username);
+    public void shareNoteWithUser(String noteId, String senderUsername, String recipientUsername);
+
+    public List<Note> searchNotes(String query, QueryType queryType, String userName);
 }

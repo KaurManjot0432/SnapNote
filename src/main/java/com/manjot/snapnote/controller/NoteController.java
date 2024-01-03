@@ -5,8 +5,10 @@ import com.manjot.snapnote.dto.note.NoteDTOMapper;
 import com.manjot.snapnote.exception.ResourceNotFoundException;
 import com.manjot.snapnote.exception.SnapNoteServiceException;
 import com.manjot.snapnote.model.Note;
+import com.manjot.snapnote.model.enums.QueryType;
 import com.manjot.snapnote.service.NoteService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +37,8 @@ public class NoteController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> createNote(@RequestBody NoteDTO noteDTO,
-                                        HttpServletRequest request) {
+    public ResponseEntity<?> createNote(@RequestBody @NotNull NoteDTO noteDTO,
+                                        @NotNull final HttpServletRequest request) {
         try {
             noteDTO.setUserName(request.getAttribute("userName").toString());
             Note note = noteService.createNote(mapToNote(noteDTO));
@@ -49,8 +51,8 @@ public class NoteController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getNoteById(@PathVariable String id,
-                                         HttpServletRequest request) {
+    public ResponseEntity<?> getNoteById(@PathVariable @NotNull final String id,
+                                         @NotNull final HttpServletRequest request) {
         try {
             String username = request.getAttribute("userName").toString();
             Note note = noteService.getNoteById(id, username);
@@ -67,7 +69,7 @@ public class NoteController {
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getAllNotes(HttpServletRequest request) {
+    public ResponseEntity<?> getAllNotes(@NotNull final HttpServletRequest request) {
         try {
             List<NoteDTO> noteListDTOS = noteService.getAllNotes(request.getAttribute("userName").toString())
                     .stream().map(NoteDTOMapper::mapToNoteDTO).toList();
@@ -81,9 +83,9 @@ public class NoteController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> updateNote(@PathVariable String id,
-                                        @RequestBody NoteDTO updatedNoteDTO,
-                                        HttpServletRequest request) {
+    public ResponseEntity<?> updateNote(@PathVariable @NotNull final String id,
+                                        @RequestBody @NotNull final NoteDTO updatedNoteDTO,
+                                        @NotNull final HttpServletRequest request) {
         try {
             String username = request.getAttribute("userName").toString();
             Note updatedNoteResult = noteService.updateNote(id, username, mapToNote(updatedNoteDTO));
@@ -98,8 +100,8 @@ public class NoteController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> deleteNoteById(@PathVariable String id,
-                                            HttpServletRequest request) {
+    public ResponseEntity<?> deleteNoteById(@PathVariable @NotNull final String id,
+                                            @NotNull final HttpServletRequest request) {
         try {
             String username = request.getAttribute("userName").toString();
             noteService.deleteNoteById(id, username);
@@ -113,9 +115,9 @@ public class NoteController {
 
     @PostMapping("/{id}/share")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> shareNoteWithUser(@PathVariable String id,
-                                               @RequestParam String recipientUsername,
-                                               HttpServletRequest request) {
+    public ResponseEntity<?> shareNoteWithUser(@PathVariable @NotNull final String id,
+                                               @RequestParam @NotNull final String recipientUsername,
+                                               @NotNull final HttpServletRequest request) {
         try {
             String senderUsername = request.getAttribute("userName").toString();
             noteService.shareNoteWithUser(id, senderUsername, recipientUsername);
@@ -124,6 +126,21 @@ public class NoteController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }  catch (Exception e) {
             return handleException(e);
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchNotes(@RequestParam @NotNull final String q,
+                                         @RequestParam @NotNull final QueryType queryType,
+                                         @NotNull final HttpServletRequest request) {
+        try {
+            String username = request.getAttribute("userName").toString();
+            List<Note> searchResults = noteService.searchNotes(q, queryType, username);
+            return ResponseEntity.ok(searchResults);
+        } catch (SnapNoteServiceException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

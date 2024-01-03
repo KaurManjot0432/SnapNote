@@ -4,8 +4,11 @@ import com.manjot.snapnote.exception.ResourceNotFoundException;
 import com.manjot.snapnote.exception.SnapNoteServiceException;
 import com.manjot.snapnote.model.Note;
 import com.manjot.snapnote.model.User;
+import com.manjot.snapnote.model.enums.QueryType;
 import com.manjot.snapnote.repository.NoteRepository;
 import com.manjot.snapnote.repository.UserRepository;
+import com.manjot.snapnote.service.search.NoteSearchStrategy;
+import com.manjot.snapnote.service.search.NoteSearchStrategyFactory;
 import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,4 +107,14 @@ public class NoteServiceImpl implements NoteService{
         noteRepository.save(sharedNote);
     }
 
+    public List<Note> searchNotes(@NotNull final String query,
+                                  @NotNull final QueryType queryType,
+                                  @NotNull final String userName) {
+        try {
+            NoteSearchStrategy strategy = NoteSearchStrategyFactory.getStrategy(queryType);
+            return strategy.search(noteRepository, query, userName);
+        } catch (Exception e) {
+            throw new SnapNoteServiceException("Error occurred during note search." + e);
+        }
+    }
 }
