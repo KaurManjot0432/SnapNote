@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface NoteRepository extends MongoRepository<Note, String> {
     Optional<List<Note>> findByUserName(String userName);
     Optional<Note> findByIdAndUserName(String id, String userName);
+    List<Note> findByContentContainingAndUserName(String content, String userName);
+    List<Note> findByLabelListInAndUserName(List<String> labels, String userName);
 }
