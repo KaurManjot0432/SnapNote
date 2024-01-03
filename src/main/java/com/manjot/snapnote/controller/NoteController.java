@@ -35,7 +35,8 @@ public class NoteController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> createNote(@RequestBody NoteDTO noteDTO, HttpServletRequest request) {
+    public ResponseEntity<?> createNote(@RequestBody NoteDTO noteDTO,
+                                        HttpServletRequest request) {
         try {
             noteDTO.setUserName(request.getAttribute("userName").toString());
             Note note = noteService.createNote(mapToNote(noteDTO));
@@ -48,7 +49,8 @@ public class NoteController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getNoteById(@PathVariable String id, HttpServletRequest request) {
+    public ResponseEntity<?> getNoteById(@PathVariable String id,
+                                         HttpServletRequest request) {
         try {
             String username = request.getAttribute("userName").toString();
             Note note = noteService.getNoteById(id, username);
@@ -79,7 +81,8 @@ public class NoteController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> updateNote(@PathVariable String id, @RequestBody NoteDTO updatedNoteDTO,
+    public ResponseEntity<?> updateNote(@PathVariable String id,
+                                        @RequestBody NoteDTO updatedNoteDTO,
                                         HttpServletRequest request) {
         try {
             String username = request.getAttribute("userName").toString();
@@ -95,7 +98,8 @@ public class NoteController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> deleteNoteById(@PathVariable String id, HttpServletRequest request) {
+    public ResponseEntity<?> deleteNoteById(@PathVariable String id,
+                                            HttpServletRequest request) {
         try {
             String username = request.getAttribute("userName").toString();
             noteService.deleteNoteById(id, username);
@@ -103,6 +107,22 @@ public class NoteController {
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    @PostMapping("/{id}/share")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> shareNoteWithUser(@PathVariable String id,
+                                               @RequestParam String recipientUsername,
+                                               HttpServletRequest request) {
+        try {
+            String senderUsername = request.getAttribute("userName").toString();
+            noteService.shareNoteWithUser(id, senderUsername, recipientUsername);
+            return ResponseEntity.ok("Note shared successfully.");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }  catch (Exception e) {
             return handleException(e);
         }
     }

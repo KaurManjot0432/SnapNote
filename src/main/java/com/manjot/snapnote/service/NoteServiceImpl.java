@@ -3,7 +3,9 @@ package com.manjot.snapnote.service;
 import com.manjot.snapnote.exception.ResourceNotFoundException;
 import com.manjot.snapnote.exception.SnapNoteServiceException;
 import com.manjot.snapnote.model.Note;
+import com.manjot.snapnote.model.User;
 import com.manjot.snapnote.repository.NoteRepository;
+import com.manjot.snapnote.repository.UserRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +14,20 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static com.manjot.snapnote.exception.ErrorMessages.INVALID_ACCESS;
-import static com.manjot.snapnote.exception.ErrorMessages.INVALID_NOTE;
+import static com.manjot.snapnote.exception.ErrorMessages.*;
 
 @Service
 public class NoteServiceImpl implements NoteService{
     private final NoteRepository noteRepository;
 
+    private final UserRepository userRepository;
+
     @Autowired
-    public NoteServiceImpl(NoteRepository noteRepository) {
+    public NoteServiceImpl(NoteRepository noteRepository,
+                           UserRepository userRepository
+    ) {
         this.noteRepository = noteRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -30,7 +36,8 @@ public class NoteServiceImpl implements NoteService{
     }
 
     @Override
-    public Note getNoteById(@NonNull final String noteId, @NonNull final String userName) {
+    public Note getNoteById(@NonNull final String noteId,
+                            @NonNull final String userName) {
         return noteRepository.findByIdAndUserName(noteId, userName)
                 .orElseThrow(() -> new ResourceNotFoundException(INVALID_NOTE));
     }
@@ -43,7 +50,9 @@ public class NoteServiceImpl implements NoteService{
     }
 
     @Override
-    public Note updateNote(@NonNull final String id, @NonNull final String username, @NonNull final Note updatedNote) {
+    public Note updateNote(@NonNull final String id,
+                           @NonNull final String username,
+                           @NonNull final Note updatedNote) {
         Optional<Note> optionalNote = noteRepository.findByIdAndUserName(id, username);
 
         if (optionalNote.isPresent()) {
@@ -60,7 +69,8 @@ public class NoteServiceImpl implements NoteService{
     }
 
     @Override
-    public void deleteNoteById(@NotNull final String id, @NotNull final String username) {
+    public void deleteNoteById(@NotNull final String id,
+                               @NotNull final String username) {
         Optional<Note> optionalNote = noteRepository.findByIdAndUserName(id, username);
 
         if (optionalNote.isPresent()) {
@@ -72,4 +82,26 @@ public class NoteServiceImpl implements NoteService{
             throw new ResourceNotFoundException(INVALID_NOTE);
         }
     }
+
+    @Override
+    public void shareNoteWithUser(@NotNull final String noteId,
+                                  @NotNull final String senderUsername,
+                                  @NotNull final String recipientUsername) {
+        Optional<Note> optionalNote = noteRepository.findByIdAndUserName(noteId, senderUsername);
+        Optional<User> optionalUser = userRepository.findByUsername(recipientUsername);
+
+        if(optionalNote.isEmpty()) throw new ResourceNotFoundException(INVALID_NOTE);
+        if(optionalUser.isEmpty()) throw new ResourceNotFoundException(INVALID_USER);
+
+        Note existingNote = optionalNote.get();
+
+        Note sharedNote = new Note();
+        sharedNote.setTitle(existingNote.getTitle());
+        sharedNote.setContent(existingNote.getContent());
+        sharedNote.setLabelList(existingNote.getLabelList());
+        sharedNote.setUserName(recipientUsername);
+
+        noteRepository.save(sharedNote);
+    }
+
 }
