@@ -4,6 +4,7 @@ import com.manjot.snapnote.exception.ResourceNotFoundException;
 import com.manjot.snapnote.exception.SnapNoteServiceException;
 import com.manjot.snapnote.model.Note;
 import com.manjot.snapnote.repository.NoteRepository;
+import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,20 +31,8 @@ public class NoteServiceImpl implements NoteService{
 
     @Override
     public Note getNoteById(@NonNull final String noteId, @NonNull final String userName) {
-        Optional<Note> optionalNote = noteRepository.findById(noteId);
-
-        if(optionalNote.isPresent()) {
-            Note note = optionalNote.get();
-
-            // Check if the authenticated user has access to the note
-            if (note.getUserName().equals(userName)) {
-                return note;
-            } else {
-                throw new SnapNoteServiceException(INVALID_ACCESS);
-            }
-        } else {
-            throw new ResourceNotFoundException(INVALID_NOTE);
-        }
+        return noteRepository.findByIdAndUserName(noteId, userName)
+                .orElseThrow(() -> new ResourceNotFoundException(INVALID_NOTE));
     }
 
     @Override
@@ -51,5 +40,36 @@ public class NoteServiceImpl implements NoteService{
 
         return noteRepository.findByUserName(userName)
                 .orElseThrow(() -> new ResourceNotFoundException("No notes found for user: " + userName));
+    }
+
+    @Override
+    public Note updateNote(@NonNull final String id, @NonNull final String username, @NonNull final Note updatedNote) {
+        Optional<Note> optionalNote = noteRepository.findByIdAndUserName(id, username);
+
+        if (optionalNote.isPresent()) {
+            Note existingNote = optionalNote.get();
+            // Update fields of existingNote with fields from updatedNote
+            existingNote.setTitle(updatedNote.getTitle());
+            existingNote.setContent(updatedNote.getContent());
+            existingNote.setLabelList(updatedNote.getLabelList());
+            // Save the updated note
+            return noteRepository.save(existingNote);
+        } else {
+            throw new ResourceNotFoundException(INVALID_NOTE);
+        }
+    }
+
+    @Override
+    public void deleteNoteById(@NotNull final String id, @NotNull final String username) {
+        Optional<Note> optionalNote = noteRepository.findByIdAndUserName(id, username);
+
+        if (optionalNote.isPresent()) {
+            Note note = optionalNote.get();
+
+            // Delete the note
+            noteRepository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException(INVALID_NOTE);
+        }
     }
 }

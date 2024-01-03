@@ -77,6 +77,36 @@ public class NoteController {
         }
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> updateNote(@PathVariable String id, @RequestBody NoteDTO updatedNoteDTO,
+                                        HttpServletRequest request) {
+        try {
+            String username = request.getAttribute("userName").toString();
+            Note updatedNoteResult = noteService.updateNote(id, username, mapToNote(updatedNoteDTO));
+            NoteDTO responseDTO = mapToNoteDTO(updatedNoteResult);
+            return ResponseEntity.ok(responseDTO);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> deleteNoteById(@PathVariable String id, HttpServletRequest request) {
+        try {
+            String username = request.getAttribute("userName").toString();
+            noteService.deleteNoteById(id, username);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return handleException(e);
+        }
+    }
+
     private ResponseEntity<?> handleException(Exception e) {
         logger.error("Error occurred while processing request", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
