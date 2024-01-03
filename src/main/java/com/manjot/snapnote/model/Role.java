@@ -17,7 +17,7 @@ import lombok.Builder;
 @NoArgsConstructor
 @ToString
 @Builder
-@Document(collection = "role")
+@Document(collection = "rolesc")
 public class Role {
 
     @Id
