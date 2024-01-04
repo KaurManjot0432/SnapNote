@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for managing Note entities in MongoDB.
+ */
 @Repository
 public interface NoteRepository extends MongoRepository<Note, String> {
     Optional<List<Note>> findByUserName(String userName);

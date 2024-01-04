@@ -5,6 +5,9 @@ import com.manjot.snapnote.model.enums.QueryType;
 
 import java.util.List;
 
+/**
+ * Service interface for handling Note-related operations.
+ */
 public interface NoteService {
     public Note createNote(Note note);
 

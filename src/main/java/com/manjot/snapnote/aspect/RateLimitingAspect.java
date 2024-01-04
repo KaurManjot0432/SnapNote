@@ -15,6 +15,9 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Aspect for rate limiting method executions.
+ */
 @Aspect
 @Component
 @Order(1)
@@ -22,6 +25,14 @@ public class RateLimitingAspect {
 
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
+    /**
+     * Checks the rate limit before proceeding with the method execution.
+     *
+     * @param joinPoint   the join point for the intercepted method
+     * @param rateLimited the RateLimited annotation applied to the method
+     * @return the result of the method execution if rate limit is not exceeded
+     * @throws Throwable if an error occurs during the method execution
+     */
     @Around("@annotation(rateLimited)")
     public Object checkRateLimit(ProceedingJoinPoint joinPoint, RateLimited rateLimited) throws Throwable {
         String methodName = joinPoint.getSignature().getName();

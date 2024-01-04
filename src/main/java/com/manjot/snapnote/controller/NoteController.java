@@ -23,6 +23,9 @@ import java.util.List;
 import static com.manjot.snapnote.dto.note.NoteDTOMapper.mapToNote;
 import static com.manjot.snapnote.dto.note.NoteDTOMapper.mapToNoteDTO;
 
+/**
+ * Controller class for handling Note-related requests.
+ */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/notes")
@@ -36,6 +39,13 @@ public class NoteController {
         this.noteService = noteService;
     }
 
+    /**
+     * Creates a new Note.
+     *
+     * @param noteDTO  The DTO containing Note details.
+     * @param request  The HTTP request.
+     * @return ResponseEntity containing the created Note or an error message.
+     */
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     @RateLimited
@@ -47,6 +57,13 @@ public class NoteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
+    /**
+     * Retrieves a Note by its ID.
+     *
+     * @param id       The ID of the Note to retrieve.
+     * @param request  The HTTP request.
+     * @return ResponseEntity containing the retrieved Note or an error message.
+     */
     @GetMapping("/{id}")
     @RateLimited
     @PreAuthorize("hasRole('USER')")
@@ -62,6 +79,12 @@ public class NoteController {
         }
     }
 
+    /**
+     * Retrieves all Notes for the authenticated user.
+     *
+     * @param request  The HTTP request.
+     * @return ResponseEntity containing the list of Notes or an error message.
+     */
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     @RateLimited
@@ -75,6 +98,14 @@ public class NoteController {
         }
     }
 
+    /**
+     * Updates an existing Note.
+     *
+     * @param id              The ID of the Note to update.
+     * @param updatedNoteDTO  The DTO containing updated Note details.
+     * @param request         The HTTP request.
+     * @return ResponseEntity containing the updated Note or an error message.
+     */
     @PutMapping("/{id}")
     @RateLimited
     @PreAuthorize("hasRole('USER')")
@@ -91,6 +122,13 @@ public class NoteController {
         }
     }
 
+    /**
+     * Deletes a Note by its ID.
+     *
+     * @param id       The ID of the Note to delete.
+     * @param request  The HTTP request.
+     * @return ResponseEntity indicating success or an error message.
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     @RateLimited
@@ -105,6 +143,14 @@ public class NoteController {
         }
     }
 
+    /**
+     * Shares a Note with another user.
+     *
+     * @param id                 The ID of the Note to share.
+     * @param recipientUsername The username of the recipient user.
+     * @param request            The HTTP request.
+     * @return ResponseEntity indicating success or an error message.
+     */
     @PostMapping("/{id}/share")
     @PreAuthorize("hasRole('USER')")
     @RateLimited
@@ -122,6 +168,14 @@ public class NoteController {
         }
     }
 
+    /**
+     * Searches for Notes based on a query and query type.
+     *
+     * @param q         The search query.
+     * @param queryType The type of query (e.g., CONTENT, LABEL).
+     * @param request   The HTTP request.
+     * @return ResponseEntity containing the search results or an error message.
+     */
     @GetMapping("/search")
     @RateLimited
     public ResponseEntity<?> searchNotes(@RequestParam @NotNull final String q,

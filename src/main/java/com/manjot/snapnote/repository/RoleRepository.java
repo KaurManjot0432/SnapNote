@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * Repository interface for managing Role entities in MongoDB.
+ */
 @Repository
 public interface RoleRepository extends MongoRepository<Role,String> {
     Optional<Role> findByName(ERole name);

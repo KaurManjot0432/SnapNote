@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Controller class for handling authentication-related requests.
+ */
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
@@ -46,6 +49,12 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    /**
+     * Handles the user authentication process.
+     *
+     * @param loginRequest The login request containing user credentials.
+     * @return ResponseEntity containing JWT response or error message.
+     */
     @PostMapping("/login")
     @RateLimited
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -68,6 +77,12 @@ public class AuthController {
                 roles));
     }
 
+    /**
+     * Handles user registration.
+     *
+     * @param signUpRequest The signup request containing user details.
+     * @return ResponseEntity containing success message or error message.
+     */
     @PostMapping("/signup")
     @RateLimited
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {

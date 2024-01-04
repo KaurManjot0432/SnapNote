@@ -19,6 +19,9 @@ import java.util.Optional;
 
 import static com.manjot.snapnote.exception.ErrorMessages.*;
 
+/**
+ * Service implementation for handling Note-related operations.
+ */
 @Service
 public class NoteServiceImpl implements NoteService {
     private final NoteRepository noteRepository;
@@ -33,11 +36,25 @@ public class NoteServiceImpl implements NoteService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Creates a new Note.
+     *
+     * @param note The Note to be created.
+     * @return The created Note.
+     */
     @Override
     public Note createNote(@NonNull final Note note) {
         return noteRepository.save(note);
     }
 
+    /**
+     * Retrieves a Note by its ID and the associated username.
+     *
+     * @param noteId   The ID of the Note to retrieve.
+     * @param userName The username associated with the Note.
+     * @return The retrieved Note.
+     * @throws ResourceNotFoundException if the Note is not found.
+     */
     @Override
     public Note getNoteById(@NonNull final String noteId,
                             @NonNull final String userName) {
@@ -45,6 +62,13 @@ public class NoteServiceImpl implements NoteService {
                 .orElseThrow(() -> new ResourceNotFoundException(INVALID_NOTE));
     }
 
+    /**
+     * Retrieves all Notes for a specific user.
+     *
+     * @param userName The username for which to retrieve Notes.
+     * @return The list of Notes for the user.
+     * @throws ResourceNotFoundException if no Notes are found for the user.
+     */
     @Override
     public List<Note> getAllNotes(@NonNull final String userName) {
 
@@ -52,6 +76,15 @@ public class NoteServiceImpl implements NoteService {
                 .orElseThrow(() -> new ResourceNotFoundException("No notes found for user: " + userName));
     }
 
+    /**
+     * Updates an existing Note.
+     *
+     * @param id           The ID of the Note to update.
+     * @param username     The username associated with the Note.
+     * @param updatedNote  The updated Note details.
+     * @return The updated Note.
+     * @throws ResourceNotFoundException if the Note is not found.
+     */
     @Override
     public Note updateNote(@NonNull final String id,
                            @NonNull final String username,
@@ -71,6 +104,13 @@ public class NoteServiceImpl implements NoteService {
         }
     }
 
+    /**
+     * Deletes a Note by its ID and the associated username.
+     *
+     * @param id       The ID of the Note to delete.
+     * @param username The username associated with the Note.
+     * @throws ResourceNotFoundException if the Note is not found.
+     */
     @Override
     public void deleteNoteById(@NotNull final String id,
                                @NotNull final String username) {
@@ -86,6 +126,15 @@ public class NoteServiceImpl implements NoteService {
         }
     }
 
+    /**
+     * Shares a Note with another user.
+     *
+     * @param noteId             The ID of the Note to share.
+     * @param senderUsername     The username of the sender.
+     * @param recipientUsername  The username of the recipient.
+     * @throws ResourceNotFoundException if the Note or User is not found.
+     * @throws SnapNoteServiceException  if an error occurs during the sharing process.
+     */
     @Override
     public void shareNoteWithUser(@NotNull final String noteId,
                                   @NotNull final String senderUsername,
@@ -111,6 +160,15 @@ public class NoteServiceImpl implements NoteService {
         }
     }
 
+    /**
+     * Searches for Notes based on a query and query type.
+     *
+     * @param query     The search query.
+     * @param queryType The type of query (e.g., CONTENT, LABEL).
+     * @param userName  The username associated with the Notes.
+     * @return The list of Notes matching the search criteria.
+     * @throws SnapNoteServiceException if an error occurs during the search process.
+     */
     public List<Note> searchNotes(@NotNull final String query,
                                   @NotNull final QueryType queryType,
                                   @NotNull final String userName) {
