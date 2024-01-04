@@ -1,5 +1,68 @@
 # Project : SnapNote
 
+## Overview
+A Note taking Application - designed to simplify the way you capture, 
+organize, and share your ideas. Whether you're a student, professional, or creative individual, SnapNote provides an intuitive 
+and collaborative platform for managing your notes effectively.
+
+## Technical Requirements
+#### User Authentication
+- Login/Signup: Users can create an account or log in securely.
+#### Note Management
+- Create Note: Users can create new notes.
+- Get Note: Retrieve individual notes.
+- Update Note: Modify existing notes with updated information.
+- Delete Note: Remove unwanted notes.
+#### Collaboration
+- Share Notes: Enable users to share notes with others.
+#### Search Functionality
+- Search Notes: Implement a robust search feature for quick note retrieval.
+## Functional Features
+- [X] Correctness - code meets all the above technical requirements as described covering all edge cases.
+- [X] Performance - Using Bucket4j Java rate-limiting library to implement rate limiting to handle high traffic.
+- [X] Security - JWT authentication ensures secure endpoints, authorization to all resources. 
+- [X] Quality - Well organized, maintainable code using MVC architecture, proper java docs for readability.
+- [X] Completeness - Extensive unit tests for all the classes and methods using Junit.
+- [X] Search Functionality - Text indexing and Label search functionality to search notes. 
+## Tech Stack 
+- Java : The backbone of SnapNote's robust backend.
+- Spring Boot : Empowering the creation of scalable and efficient applications.
+- MongoDB : A flexible NoSQL database for efficient data storage.
+- Bucket4j : Ensuring system stability through effective rate limiting.
+- Aspecj : Implementing custom annotations and aspect-oriented programming.
+- Junit : Used for extensive unit testing to ensure code reliability and correctness.
+
+## Getting Started
+
+1. Clone the Repository:
+
+```bash
+git clone https://github.com/KaurManjot0432/SnapNote.git
+```
+
+2. Navigate to Project Directory:
+```bash
+cd snapnote
+```
+
+3. Build the Project:
+```bash
+./mvnw clean install
+```
+
+4. Run the Application:
+```bash
+./mvnw spring-boot:run
+```
+
+5. Access the API Endpoints:
+
+- The application will be running, and you can access the API endpoints through a tool like Postman or curl.
+6. Run Unit Tests:
+```bash 
+./mvnw test
+```
+
 ## API Documentation
 
 ### Signup
