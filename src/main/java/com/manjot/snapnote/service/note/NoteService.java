@@ -1,4 +1,4 @@
-package com.manjot.snapnote.service;
+package com.manjot.snapnote.service.note;
 
 import com.manjot.snapnote.model.Note;
 import com.manjot.snapnote.model.enums.QueryType;

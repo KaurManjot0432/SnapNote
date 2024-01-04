@@ -7,7 +7,7 @@ import com.manjot.snapnote.exception.ResourceNotFoundException;
 import com.manjot.snapnote.exception.SnapNoteServiceException;
 import com.manjot.snapnote.model.Note;
 import com.manjot.snapnote.model.enums.QueryType;
-import com.manjot.snapnote.service.NoteService;
+import com.manjot.snapnote.service.note.NoteService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -41,14 +41,10 @@ public class NoteController {
     @RateLimited
     public ResponseEntity<?> createNote(@RequestBody @NotNull NoteDTO noteDTO,
                                         @NotNull final HttpServletRequest request) {
-        try {
-            noteDTO.setUserName(request.getAttribute("userName").toString());
-            Note note = noteService.createNote(mapToNote(noteDTO));
-            NoteDTO responseDTO = mapToNoteDTO(note);
-            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
-        } catch (Exception e) {
-            return handleException(e);
-        }
+        noteDTO.setUserName(request.getAttribute("userName").toString());
+        Note note = noteService.createNote(mapToNote(noteDTO));
+        NoteDTO responseDTO = mapToNoteDTO(note);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @GetMapping("/{id}")
@@ -61,12 +57,8 @@ public class NoteController {
             Note note = noteService.getNoteById(id, username);
             NoteDTO responseDTO = mapToNoteDTO(note);
             return ResponseEntity.ok(responseDTO);
-        } catch (SnapNoteServiceException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return handleException(e);
         }
     }
 
@@ -80,8 +72,6 @@ public class NoteController {
             return ResponseEntity.ok(noteListDTOS);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return handleException(e);
         }
     }
 
@@ -98,8 +88,6 @@ public class NoteController {
             return ResponseEntity.ok(responseDTO);
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return handleException(e);
         }
     }
 
@@ -114,8 +102,6 @@ public class NoteController {
             return ResponseEntity.noContent().build();
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return handleException(e);
         }
     }
 
@@ -131,7 +117,7 @@ public class NoteController {
             return ResponseEntity.ok("Note shared successfully.");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }  catch (Exception e) {
+        }  catch (SnapNoteServiceException e) {
             return handleException(e);
         }
     }
@@ -146,9 +132,7 @@ public class NoteController {
             List<Note> searchResults = noteService.searchNotes(q, queryType, username);
             return ResponseEntity.ok(searchResults);
         } catch (SnapNoteServiceException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return handleException(e);
         }
     }
 

@@ -1,4 +1,4 @@
-package com.manjot.snapnote.service;
+package com.manjot.snapnote.service.note;
 
 import com.manjot.snapnote.exception.ResourceNotFoundException;
 import com.manjot.snapnote.exception.SnapNoteServiceException;
@@ -20,7 +20,7 @@ import java.util.Optional;
 import static com.manjot.snapnote.exception.ErrorMessages.*;
 
 @Service
-public class NoteServiceImpl implements NoteService{
+public class NoteServiceImpl implements NoteService {
     private final NoteRepository noteRepository;
 
     private final UserRepository userRepository;
@@ -96,15 +96,19 @@ public class NoteServiceImpl implements NoteService{
         if(optionalNote.isEmpty()) throw new ResourceNotFoundException(INVALID_NOTE);
         if(optionalUser.isEmpty()) throw new ResourceNotFoundException(INVALID_USER);
 
-        Note existingNote = optionalNote.get();
+        try {
+            Note existingNote = optionalNote.get();
 
-        Note sharedNote = new Note();
-        sharedNote.setTitle(existingNote.getTitle());
-        sharedNote.setContent(existingNote.getContent());
-        sharedNote.setLabelList(existingNote.getLabelList());
-        sharedNote.setUserName(recipientUsername);
+            Note sharedNote = new Note();
+            sharedNote.setTitle(existingNote.getTitle());
+            sharedNote.setContent(existingNote.getContent());
+            sharedNote.setLabelList(existingNote.getLabelList());
+            sharedNote.setUserName(recipientUsername);
 
-        noteRepository.save(sharedNote);
+            noteRepository.save(sharedNote);
+        } catch (Exception e) {
+            throw new SnapNoteServiceException("Error occurred during note search." + e);
+        }
     }
 
     public List<Note> searchNotes(@NotNull final String query,
