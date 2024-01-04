@@ -18,12 +18,12 @@ and collaborative platform for managing your notes effectively.
 #### Search Functionality
 - Search Notes: Implement a robust search feature for quick note retrieval.
 ## Functional Features
-- [X] Correctness - code meets all the above technical requirements as described covering all edge cases.
-- [X] Performance - Using Bucket4j Java rate-limiting library to implement rate limiting to handle high traffic.
-- [X] Security - JWT authentication ensures secure endpoints, authorization to all resources. 
-- [X] Quality - Well organized, maintainable code using MVC architecture, proper java docs for readability.
-- [X] Completeness - Extensive unit tests for all the classes and methods using Junit.
-- [X] Search Functionality - Text indexing and Label search functionality to search notes. 
+- [X] Correctness - Ensures accuracy in functionality, covering all technical requirements and edge cases.
+- [X] Performance - Implements rate limiting using the powerful Bucket4j Java library, effectively managing high traffic scenarios.
+- [X] Security - Employs JWT authentication, guaranteeing secure endpoints and stringent authorization for all resources.
+- [X] Quality - Maintains a high standard of code organization and readability, following the MVC architecture and utilizing the Factory Design Pattern. Comprehensive JavaDocs enhance code understanding.
+- [X] Completeness - Achieves thorough test coverage through extensive unit tests using Junit.
+- [X] Search Functionality - Enhances user experience with advanced text indexing and label search capabilities for efficient note retrieval.
 ## Tech Stack 
 - Java : The backbone of SnapNote's robust backend.
 - Spring Boot : Empowering the creation of scalable and efficient applications.
