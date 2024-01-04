@@ -1,5 +1,6 @@
 package com.manjot.snapnote.controller;
 
+import com.manjot.snapnote.annotation.RateLimited;
 import com.manjot.snapnote.dto.note.NoteDTO;
 import com.manjot.snapnote.dto.note.NoteDTOMapper;
 import com.manjot.snapnote.exception.ResourceNotFoundException;
@@ -37,6 +38,7 @@ public class NoteController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
+    @RateLimited
     public ResponseEntity<?> createNote(@RequestBody @NotNull NoteDTO noteDTO,
                                         @NotNull final HttpServletRequest request) {
         try {
@@ -50,6 +52,7 @@ public class NoteController {
     }
 
     @GetMapping("/{id}")
+    @RateLimited
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getNoteById(@PathVariable @NotNull final String id,
                                          @NotNull final HttpServletRequest request) {
@@ -69,6 +72,7 @@ public class NoteController {
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
+    @RateLimited
     public ResponseEntity<?> getAllNotes(@NotNull final HttpServletRequest request) {
         try {
             List<NoteDTO> noteListDTOS = noteService.getAllNotes(request.getAttribute("userName").toString())
@@ -82,6 +86,7 @@ public class NoteController {
     }
 
     @PutMapping("/{id}")
+    @RateLimited
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> updateNote(@PathVariable @NotNull final String id,
                                         @RequestBody @NotNull final NoteDTO updatedNoteDTO,
@@ -100,6 +105,7 @@ public class NoteController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
+    @RateLimited
     public ResponseEntity<?> deleteNoteById(@PathVariable @NotNull final String id,
                                             @NotNull final HttpServletRequest request) {
         try {
@@ -115,6 +121,7 @@ public class NoteController {
 
     @PostMapping("/{id}/share")
     @PreAuthorize("hasRole('USER')")
+    @RateLimited
     public ResponseEntity<?> shareNoteWithUser(@PathVariable @NotNull final String id,
                                                @RequestParam @NotNull final String recipientUsername,
                                                @NotNull final HttpServletRequest request) {
@@ -130,6 +137,7 @@ public class NoteController {
     }
 
     @GetMapping("/search")
+    @RateLimited
     public ResponseEntity<?> searchNotes(@RequestParam @NotNull final String q,
                                          @RequestParam @NotNull final QueryType queryType,
                                          @NotNull final HttpServletRequest request) {

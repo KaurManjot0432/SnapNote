@@ -1,5 +1,6 @@
 package com.manjot.snapnote.controller;
 
+import com.manjot.snapnote.annotation.RateLimited;
 import com.manjot.snapnote.model.User;
 import com.manjot.snapnote.model.Role;
 import com.manjot.snapnote.dto.authentication.request.LoginRequest;
@@ -46,6 +47,7 @@ public class AuthController {
     JwtUtils jwtUtils;
 
     @PostMapping("/login")
+    @RateLimited
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
@@ -67,6 +69,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
+    @RateLimited
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
